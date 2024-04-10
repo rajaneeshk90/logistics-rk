@@ -19,7 +19,7 @@ The following recommendations need to be considered when implementing discovery 
 - REQUIRED. Any form that must be filled before receiving a quotation on a logistics service must be mapped to the `XInput` schema
 - REQUIRED. If the logistics service provider wants to group its services under a specific category, it must map each category to the `Category` schema
 - REQUIRED. Any order delivery information MUST be mapped to the `Fulfillment` schema.
-- REQUIRED. If the BPP does not want to respond to a search request, it MUST return a `ack.status` value equal to `NACK`
+- REQUIRED. If the BPP does not want to respond to a search request, it MUST return an acknowledgement with the `ack.status` value equal to `NACK`
 - RECOMMENDED. Upon receiving a `search` request, the BPP SHOULD return a catalog that best matches the intent. This can be done by indexing the catalog against the various probable paths in the `Intent` schema relevant to typical logistics use cases
 
 ### 1.1.2 Recommendations for BAPs
@@ -209,14 +209,14 @@ An example catalog of a logistics service provider may look like this
 ```
 //TODO
 ## 1.2 Initiating an order for a logistics service
-This section provides recommendations for implementing the APIs related to a logistics service.
+This section provides recommendations for implementing the APIs related to booking a logistics service.
 
 ### 1.2.1 Recommendations for BPPs
 
 #### 1.2.1.1 Selecting a logistics service from the catalog
 - REQUIRED. The BPP MUST implement the `select` endpoint on the url specified in the `context.bpp_uri` field sent during `on_search`. In case of permissioned networks, this URL MUST match the `Subscriber.url` present on the respective entry in the Network Registry
-- REQUIRED. The BPP MUST check for a form submission at the URL specified on the `xinput.form.url` before acknowledging a `select` request.
-- REQUIRED. If the logistics service provider has successfully received the information submitted by the consumer, the BPP must return an acknowledgement with `ack.status` set to `ACK` in response to the `select` request
+- OPTIONAL. The BPP MUST check for a form submission at the URL specified on the `xinput.form.url` before acknowledging a `select` request.
+- REQUIRED. If the logistics service provider has successfully received the information submitted by the customer, the BPP must return an acknowledgement with `ack.status` set to `ACK` in response to the `select` request
 - REQUIRED. If the logistics service provider has returned a successful acknowledgement to a `select` request, it MUST send the offer encapsulated in an `Order` object
 
 #### 1.2.1.2 Initializing a logistics service order
@@ -228,10 +228,12 @@ This section provides recommendations for implementing the APIs related to a log
 ### 1.2.2 Recommendations for BAPs
 
 #### 1.2.1.1 Selecting a logistics service from the catalog
-- REQUIRED. The BAP user MUST submit the form on the url received from  `on_search`  under `xinput.form.url`.
 - REQUIRED. The BAP MUST implement the `on_select` endpoint on the url specified in the `context.bap_uri` field sent during `select`. In case of permissioned networks, this URL MUST match the `Subscriber.url` present on the respective entry in the Network Registry
+- OPTIONAL. The BAP user MUST submit the form at the URL received from `on_search`, if any,  under `xinput.form.url`.
+- OPTIONAL. The BPP MUST check for a form submission at the URL specified on the `xinput.form.url` before acknowledging a `select` request.
 
 #### 1.2.2.2  Initializing a logistics service order
+- OPTIONAL. The BAP user MUST submit the form at the URL received from `on_select`, if any,  under `xinput.form.url`.
 - REQUIRED. The BAP MUST hit the `init` endpoint on the url specified in  the `context.bpp_uri` field sent during `on_search`. 
 - REQUIRED. The BAP MUST implement the `on_init` endpoint on the url specified in  the `context.bap_uri` field sent during `init`. In case of permissioned networks, this URL MUST match the `Subscriber.url` present on the respective entry in the Network Registry
 
@@ -239,7 +241,7 @@ This section provides recommendations for implementing the APIs related to a log
 - REQUIRED. The BAP MUST hit the `confirm` endpoint on the url specified in  the `context.bpp_uri` field sent during `on_search`. 
 - REQUIRED. The BAP MUST implement the `on_confirm` endpoint on the url specified in URL specified in the `context.bap_uri` field sent during `confirm`. In case of permissioned networks, this URL MUST match the `Subscriber.url` present on the respective entry in the Network Registry
 
-### 1.2.3 Example Workflow
+### 1.2.3 Example Workflow for Initiating a booking for a logistics service.
 
 ### 1.2.3 Example Requests
 
