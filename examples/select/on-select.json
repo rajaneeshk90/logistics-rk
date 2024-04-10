@@ -27,18 +27,29 @@
                 "descriptor": { 
                     "name":"Logistics",
                     "short_desc":"Logistics Org",
-                    "long_desc":"Logistics Org"
+                    "long_desc":"Logistics Org",
+                    "images": [
+                        {
+                            "url": "https://logistics-guru-image.png",
+                            "size_type": "sm"
+                        }
+                    ]
                 },
                 "locations":[
                     {
                         "id": "L1",
                         "gps": "13.786587,76.872309",
-                        "address": {
-                            "street": "Shubhash nagar, 3rd block",
-                            "city": "Bengaluru",
-                            "area_code": "560042",
-                            "state": "KA"
-                        }
+                        "address": "Shubhash nagar, 3rd block",
+                        "city": {
+                            "name": "Bengaluru"
+                        },
+                        "state": {
+                            "name": "Karnataka"
+                        },
+                        "country": {
+                            "name": "India"
+                        },
+                        "area_code": "560042"
                     }
                 ]
             },
@@ -90,18 +101,14 @@
                             "type": "Pickup",
                             "location": {
                                 "gps": "14.785638,76.454553",
-                                "address": {
-                                    "area_code": "320042"
-                                }
+                                "area_code": "320042"
                             }
                         },
                         {
                             "type": "Drop",
                             "location": {
                                 "gps": "14.433424,77.928379",
-                                "address": {
-                                    "area_code": "320042"
-                                }
+                                "area_code": "320042"
                             }
                         }
                     ]
@@ -114,7 +121,7 @@
                 },
                 "breakup": [
                     {
-                        "type": "item",
+                        "title": "item price",
                         "item": {
                             "id": "I1"
                         },

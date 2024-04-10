@@ -47,20 +47,32 @@
                             "type": "Pickup",
                             "location": {
                                 "gps": "14.785638,76.454553",
-                                "address": {
-                                    "area_code": "320042"
-                                }
+                                "area_code": "320042"
                             },
                             "time": {
                                 "timestamp": "2024-01-15T16:00:00.000Z"
+                            },
+                            "customer": {
+                                "person": {
+                                    "name": "Paul Sterling"
+                                },
+                                "contact": {
+                                    "phone": "+913333333333"
+                                }
                             }
                         },
                         {
                             "type": "Drop",
                             "location": {
                                 "gps": "14.433424,77.928379",
-                                "address": {
-                                    "area_code": "320042"
+                                "area_code": "320042"
+                            },
+                            "customer": {
+                                "person": {
+                                    "name": "Anand Ahuja"
+                                },
+                                "contact": {
+                                    "phone": "+914444444444"
                                 }
                             }
                         }
@@ -77,10 +89,8 @@
                 "type": "PRE-FULFILLMENT",
                 "params": {
                     "transaction_id": "tid/6737457",
-                    "amount": "1500",
-                    "currency": "INR",
-                    "bank_code": "INB0004321",
-                    "bank_account_number": "1234002341"
+                    "amount": "50",
+                    "currency": "INR"
                 }
             }
         }

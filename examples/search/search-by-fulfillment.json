@@ -31,18 +31,14 @@
                         "type": "Pickup",
                         "location": {
                             "gps": "14.785638,76.454553",
-                            "address": {
-                                "area_code": "320042"
-                            }
+                            "area_code": "320042"
                         }
                     },
                     {
                         "type": "Drop",
                         "location": {
                             "gps": "14.433424,77.928379",
-                            "address": {
-                                "area_code": "540045"
-                            }
+                            "area_code": "540045"
                         }
                     }
                 ]

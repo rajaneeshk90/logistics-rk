@@ -26,21 +26,34 @@
                 "name":"XYZLogistics"
             },
             "providers": [ 
-                { 
+                {
                     "id":"P1",
                     "descriptor": { 
-                        "name":"Logistics",
+                        "name":"Logistics Guru",
                         "short_desc":"Logistics Org",
-                        "long_desc":"Logistics Org"
+                        "long_desc":"Logistics Org",
+                        "images": [
+                            {
+                                "url": "https://logistics-guru-image.png",
+                                "size_type": "sm"
+                            }
+                        ]
                     },
                     "locations":[
                         {
                             "id": "L1",
                             "gps": "13.786587,76.872309",
                             "address": "Shubhash nagar, 3rd block",
-                            "city": "Bengaluru",
-                            "area_code": "560042",
-                            "state": "KA"
+                            "city": {
+                                "name": "Bengaluru"
+                            },
+                            "state": {
+                                "name": "Karnataka"
+                            },
+                            "country": {
+                                "name": "India"
+                            },
+                            "area_code": "560042"
                         }
                     ],
                     "categories": [

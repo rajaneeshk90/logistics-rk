@@ -25,7 +25,7 @@
             "provider": {
                 "id": "P1"
             },
-            "items":[
+            "items": [
                 {
                     "id": "I1",
                     "quantity": {
@@ -46,18 +46,14 @@
                             "type": "Pickup",
                             "location": {
                                 "gps": "14.785638,76.454553",
-                                "address": {
-                                    "area_code": "320042"
-                                }
+                                "area_code": "320042"
                             }
                         },
                         {
                             "type": "Drop",
                             "location": {
                                 "gps": "14.433424,77.928379",
-                                "address": {
-                                    "area_code": "320042"
-                                }
+                                "area_code": "320042"
                             }
                         }
                     ]

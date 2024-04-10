@@ -23,7 +23,6 @@
     },
     "message": {
         "support": {
-            "type": "Order",
             "ref_id": "oid/12",
             "callback_phone": "+919876564534"
         }
