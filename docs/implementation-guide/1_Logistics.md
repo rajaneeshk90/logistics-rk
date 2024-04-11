@@ -76,18 +76,14 @@ A search request for a logistics service provider may look like this
                         "type": "Pickup",
                         "location": {
                             "gps": "14.785638,76.454553",
-                            "address": {
-                                "area_code": "320042"
-                            }
+                            "area_code": "320042"
                         }
                     },
                     {
                         "type": "Drop",
                         "location": {
                             "gps": "14.433424,77.928379",
-                            "address": {
-                                "area_code": "540045"
-                            }
+                            "area_code": "540045"
                         }
                     }
                 ]
@@ -127,21 +123,34 @@ An example catalog of a logistics service provider may look like this
                 "name":"XYZLogistics"
             },
             "providers": [ 
-                { 
+                {
                     "id":"P1",
                     "descriptor": { 
-                        "name":"Logistics",
+                        "name":"Logistics Guru",
                         "short_desc":"Logistics Org",
-                        "long_desc":"Logistics Org"
+                        "long_desc":"Logistics Org",
+                        "images": [
+                            {
+                                "url": "https://logistics-guru-image.png",
+                                "size_type": "sm"
+                            }
+                        ]
                     },
                     "locations":[
                         {
                             "id": "L1",
                             "gps": "13.786587,76.872309",
                             "address": "Shubhash nagar, 3rd block",
-                            "city": "Bengaluru",
-                            "area_code": "560042",
-                            "state": "KA"
+                            "city": {
+                                "name": "Bengaluru"
+                            },
+                            "state": {
+                                "name": "Karnataka"
+                            },
+                            "country": {
+                                "name": "India"
+                            },
+                            "area_code": "560042"
                         }
                     ],
                     "categories": [
@@ -274,7 +283,7 @@ Below is an example of a `select` request
             "provider": {
                 "id": "P1"
             },
-            "items":[
+            "items": [
                 {
                     "id": "I1",
                     "quantity": {
@@ -295,18 +304,14 @@ Below is an example of a `select` request
                             "type": "Pickup",
                             "location": {
                                 "gps": "14.785638,76.454553",
-                                "address": {
-                                    "area_code": "320042"
-                                }
+                                "area_code": "320042"
                             }
                         },
                         {
                             "type": "Drop",
                             "location": {
                                 "gps": "14.433424,77.928379",
-                                "address": {
-                                    "area_code": "320042"
-                                }
+                                "area_code": "320042"
                             }
                         }
                     ]
@@ -348,18 +353,29 @@ Below is an example of an `on_select` callback
                 "descriptor": { 
                     "name":"Logistics",
                     "short_desc":"Logistics Org",
-                    "long_desc":"Logistics Org"
+                    "long_desc":"Logistics Org",
+                    "images": [
+                        {
+                            "url": "https://logistics-guru-image.png",
+                            "size_type": "sm"
+                        }
+                    ]
                 },
                 "locations":[
                     {
                         "id": "L1",
                         "gps": "13.786587,76.872309",
-                        "address": {
-                            "street": "Shubhash nagar, 3rd block",
-                            "city": "Bengaluru",
-                            "area_code": "560042",
-                            "state": "KA"
-                        }
+                        "address": "Shubhash nagar, 3rd block",
+                        "city": {
+                            "name": "Bengaluru"
+                        },
+                        "state": {
+                            "name": "Karnataka"
+                        },
+                        "country": {
+                            "name": "India"
+                        },
+                        "area_code": "560042"
                     }
                 ]
             },
@@ -411,18 +427,14 @@ Below is an example of an `on_select` callback
                             "type": "Pickup",
                             "location": {
                                 "gps": "14.785638,76.454553",
-                                "address": {
-                                    "area_code": "320042"
-                                }
+                                "area_code": "320042"
                             }
                         },
                         {
                             "type": "Drop",
                             "location": {
                                 "gps": "14.433424,77.928379",
-                                "address": {
-                                    "area_code": "320042"
-                                }
+                                "area_code": "320042"
                             }
                         }
                     ]
@@ -435,7 +447,7 @@ Below is an example of an `on_select` callback
                 },
                 "breakup": [
                     {
-                        "type": "item",
+                        "title": "item price",
                         "item": {
                             "id": "I1"
                         },
@@ -503,20 +515,32 @@ Below is an example of a `init` request
                             "type": "Pickup",
                             "location": {
                                 "gps": "14.785638,76.454553",
-                                "address": {
-                                    "area_code": "320042"
-                                }
+                                "area_code": "320042"
                             },
                             "time": {
                                 "timestamp": "2024-01-15T16:00:00.000Z"
+                            },
+                            "customer": {
+                                "person": {
+                                    "name": "Paul Sterling"
+                                },
+                                "contact": {
+                                    "phone": "+913333333333"
+                                }
                             }
                         },
                         {
                             "type": "Drop",
                             "location": {
                                 "gps": "14.433424,77.928379",
-                                "address": {
-                                    "area_code": "320042"
+                                "area_code": "320042"
+                            },
+                            "customer": {
+                                "person": {
+                                    "name": "Anand Ahuja"
+                                },
+                                "contact": {
+                                    "phone": "+914444444444"
                                 }
                             }
                         }
@@ -525,7 +549,7 @@ Below is an example of a `init` request
             ],
             "billing": {
                 "name": "Paul Sterling",
-                "phone": "+919876345623",
+                "phone": "+913333333333",
                 "email": "sample@gmail.com"
             }
         }
@@ -564,18 +588,29 @@ Below is an example of an `on_init` callback
                 "descriptor": { 
                     "name":"Logistics",
                     "short_desc":"Logistics Org",
-                    "long_desc":"Logistics Org"
+                    "long_desc":"Logistics Org",
+                    "images": [
+                        {
+                            "url": "https://logistics-guru-image.png",
+                            "size_type": "sm"
+                        }
+                    ]
                 },
                 "locations":[
                     {
                         "id": "L1",
                         "gps": "13.786587,76.872309",
-                        "address": {
-                            "street": "Shubhash nagar, 3rd block",
-                            "city": "Bengaluru",
-                            "area_code": "560042",
-                            "state": "KA"
-                        }
+                        "address": "Shubhash nagar, 3rd block",
+                        "city": {
+                            "name": "Bengaluru"
+                        },
+                        "state": {
+                            "name": "Karnataka"
+                        },
+                        "country": {
+                            "name": "India"
+                        },
+                        "area_code": "560042"
                     }
                 ]
             },
@@ -626,7 +661,7 @@ Below is an example of an `on_init` callback
                 },
                 "breakup": [
                     {
-                        "type": "item",
+                        "title": "item price",
                         "item": {
                             "id": "I1"
                         },
@@ -646,20 +681,32 @@ Below is an example of an `on_init` callback
                             "type": "Pickup",
                             "location": {
                                 "gps": "14.785638,76.454553",
-                                "address": {
-                                    "area_code": "320042"
-                                }
+                                "area_code": "320042"
                             },
                             "time": {
                                 "timestamp": "2024-01-15T16:00:00.000Z"
+                            },
+                            "customer": {
+                                "person": {
+                                    "name": "Paul Sterling"
+                                },
+                                "contact": {
+                                    "phone": "+913333333333"
+                                }
                             }
                         },
                         {
                             "type": "Drop",
                             "location": {
                                 "gps": "14.433424,77.928379",
-                                "address": {
-                                    "area_code": "320042"
+                                "area_code": "320042"
+                            },
+                            "customer": {
+                                "person": {
+                                    "name": "Anand Ahuja"
+                                },
+                                "contact": {
+                                    "phone": "+914444444444"
                                 }
                             }
                         }
@@ -668,17 +715,16 @@ Below is an example of an `on_init` callback
             ],
             "billing": {
                 "name": "Paul Sterling",
-                "phone": "+919876345623",
+                "phone": "+913333333333",
                 "email": "sample@gmail.com"
             },
             "payment": {
                 "status": "NOT-PAID",
                 "type": "PRE-FULFILLMENT",
+                "url": "https://payment-url-link/pay/secure.html",
                 "params": {
-                  "amount": "1500",
-                  "currency": "INR",
-                  "bank_code": "INB0004321",
-                  "bank_account_number": "1234002341"
+                  "amount": "50",
+                  "currency": "INR"
                 }
             }
         }
@@ -737,20 +783,32 @@ Below is an example of a `confirm` request
                             "type": "Pickup",
                             "location": {
                                 "gps": "14.785638,76.454553",
-                                "address": {
-                                    "area_code": "320042"
-                                }
+                                "area_code": "320042"
                             },
                             "time": {
                                 "timestamp": "2024-01-15T16:00:00.000Z"
+                            },
+                            "customer": {
+                                "person": {
+                                    "name": "Paul Sterling"
+                                },
+                                "contact": {
+                                    "phone": "+913333333333"
+                                }
                             }
                         },
                         {
                             "type": "Drop",
                             "location": {
                                 "gps": "14.433424,77.928379",
-                                "address": {
-                                    "area_code": "320042"
+                                "area_code": "320042"
+                            },
+                            "customer": {
+                                "person": {
+                                    "name": "Anand Ahuja"
+                                },
+                                "contact": {
+                                    "phone": "+914444444444"
                                 }
                             }
                         }
@@ -767,10 +825,8 @@ Below is an example of a `confirm` request
                 "type": "PRE-FULFILLMENT",
                 "params": {
                     "transaction_id": "tid/6737457",
-                    "amount": "1500",
-                    "currency": "INR",
-                    "bank_code": "INB0004321",
-                    "bank_account_number": "1234002341"
+                    "amount": "50",
+                    "currency": "INR"
                 }
             }
         }
@@ -807,20 +863,31 @@ Below is an example of an `on_confirm` callback
             "provider": {
                 "id": "P1",
                 "descriptor": {
-                    "name": "Logistics",
+                    "name": "Logistics Guru",
                     "short_desc": "Logistics Org",
-                    "long_desc": "Logistics Org"
+                    "long_desc": "Logistics Org",
+                    "images": [
+                        {
+                            "url": "https://logistics-guru-image.png",
+                            "size_type": "sm"
+                        }
+                    ]
                 },
                 "locations": [
                     {
                         "id": "L1",
                         "gps": "13.786587,76.872309",
-                        "address": {
-                            "street": "Shubhash nagar, 3rd block",
-                            "city": "Bengaluru",
-                            "area_code": "560042",
-                            "state": "KA"
-                        }
+                        "address": "Shubhash nagar, 3rd block",
+                        "city": {
+                            "name": "Bengaluru"
+                        },
+                        "state": {
+                            "name": "Karnataka"
+                        },
+                        "country": {
+                            "name": "India"
+                        },
+                        "area_code": "560042"
                     }
                 ]
             },
@@ -871,7 +938,7 @@ Below is an example of an `on_confirm` callback
                 },
                 "breakup": [
                     {
-                        "type": "item",
+                        "title": "item price",
                         "item": {
                             "id": "I1"
                         },
@@ -891,34 +958,46 @@ Below is an example of an `on_confirm` callback
                             "type": "Pickup",
                             "location": {
                                 "gps": "14.785638,76.454553",
-                                "address": {
-                                    "area_code": "320042"
-                                }
+                                "area_code": "320042"
                             },
                             "time": {
                                 "timestamp": "2024-01-15T16:00:00.000Z"
+                            },
+                            "customer": {
+                                "person": {
+                                    "name": "Paul Sterling"
+                                },
+                                "contact": {
+                                    "phone": "+913333333333"
+                                }
                             }
                         },
                         {
                             "type": "Drop",
                             "location": {
                                 "gps": "14.433424,77.928379",
-                                "address": {
-                                    "area_code": "320042"
+                                "area_code": "320042"
+                            },
+                            "customer": {
+                                "person": {
+                                    "name": "Anand Ahuja"
+                                },
+                                "contact": {
+                                    "phone": "+914444444444"
                                 }
                             }
                         }
                     ],
                     "state": {
                         "descriptor": {
-                            "code": "Pending-Fulfillment"
+                            "code": "Order_Initiated"
                         }
                     }
                 }
             ],
             "billing": {
                 "name": "Paul Sterling",
-                "phone": "+919876345623",
+                "phone": "+913333333333",
                 "email": "sample@gmail.com"
             },
             "payment": {
@@ -926,10 +1005,8 @@ Below is an example of an `on_confirm` callback
                 "type": "PRE-FULFILLMENT",
                 "params": {
                     "transaction_id": "tid/6737457",
-                    "amount": "1500",
-                    "currency": "INR",
-                    "bank_code": "INB0004321",
-                    "bank_account_number": "1234002341"
+                    "amount": "50",
+                    "currency": "INR"
                 }
             }
         }
@@ -1037,18 +1114,29 @@ Below is an example of an `on_status` callback
                 "descriptor": {
                     "name": "Logistics",
                     "short_desc": "Logistics Org",
-                    "long_desc": "Logistics Org"
+                    "long_desc": "Logistics Org",
+                    "images": [
+                        {
+                            "url": "https://logistics-guru-image.png",
+                            "size_type": "sm"
+                        }
+                    ]
                 },
                 "locations": [
                     {
                         "id": "L1",
                         "gps": "13.786587,76.872309",
-                        "address": {
-                            "street": "Shubhash nagar, 3rd block",
-                            "city": "Bengaluru",
-                            "area_code": "560042",
-                            "state": "KA"
-                        }
+                        "address": "Shubhash nagar, 3rd block",
+                        "city": {
+                            "name": "Bengaluru"
+                        },
+                        "state": {
+                            "name": "Karnataka"
+                        },
+                        "country": {
+                            "name": "India"
+                        },
+                        "area_code": "560042"
                     }
                 ]
             },
@@ -1099,7 +1187,7 @@ Below is an example of an `on_status` callback
                 },
                 "breakup": [
                     {
-                        "type": "item",
+                        "title": "item price",
                         "item": {
                             "id": "I1"
                         },
@@ -1119,34 +1207,54 @@ Below is an example of an `on_status` callback
                             "type": "Pickup",
                             "location": {
                                 "gps": "14.785638,76.454553",
-                                "address": {
-                                    "area_code": "320042"
-                                }
+                                "area_code": "320042"
                             },
                             "time": {
                                 "timestamp": "2024-01-15T16:00:00.000Z"
+                            },
+                            "customer": {
+                                "person": {
+                                    "name": "Paul Sterling"
+                                },
+                                "contact": {
+                                    "phone": "+913333333333"
+                                }
                             }
                         },
                         {
                             "type": "Drop",
                             "location": {
                                 "gps": "14.433424,77.928379",
-                                "address": {
-                                    "area_code": "320042"
+                                "area_code": "320042"
+                            },
+                            "customer": {
+                                "person": {
+                                    "name": "Anand Ahuja"
+                                },
+                                "contact": {
+                                    "phone": "+914444444444"
                                 }
                             }
                         }
                     ],
                     "state": {
                         "descriptor": {
-                            "code": "Shipped"
+                            "code": "In-Transit"
+                        }
+                    },
+                    "agent": {
+                        "person": {
+                            "name": "Ramesh"
+                        },
+                        "contact": {
+                            "phone": "+915555555555"
                         }
                     }
                 }
             ],
             "billing": {
                 "name": "Paul Sterling",
-                "phone": "+919876345623",
+                "phone": "+913333333333",
                 "email": "sample@gmail.com"
             },
             "payment": {
@@ -1154,10 +1262,8 @@ Below is an example of an `on_status` callback
                 "type": "PRE-FULFILLMENT",
                 "params": {
                     "transaction_id": "tid/6737457",
-                    "amount": "1500",
-                    "currency": "INR",
-                    "bank_code": "INB0004321",
-                    "bank_account_number": "1234002341"
+                    "amount": "50",
+                    "currency": "INR"
                 }
             }
         }
@@ -1353,7 +1459,6 @@ Below is an example of a `support` request
     },
     "message": {
         "support": {
-            "type": "Order",
             "ref_id": "oid/12",
             "callback_phone": "+919876564534"
         }
