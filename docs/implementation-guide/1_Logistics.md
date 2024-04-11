@@ -31,14 +31,14 @@ The following recommendations need to be considered when implementing discovery 
 - REQUIRED. If the `catalog.providers[].items[].xinput.required` field is set to `"true"` , then the BAP MUST NOT fire a `select`, `init` or `confirm` call until the form is submitted and a successful response is received
 - RECOMMENDED. If the `catalog.providers[].items[].xinput.required` field is set to `"false"` , then the BAP SHOULD allow the user to skip filling the form
 
-### Discovery Flow of a Logistics service. 
+### Example Workflow of the Discovery Process for a Logistics Service.
 Note: This is just one of the many ways to implement the Beckn Logistics specification. The implementors may want to implememt the Beckn Logistics specification as per their need.
 
 1. A customer looking for logistics services logs in to a logistics app, or a website, and makes a search request by providing the details of the services required, for example, the start and end location of the shipment, the type and weight of the object to be shipped etc.
-2. The logistics app forms a search request as per the Beckn logistics specification and sends the request to the Gateway Gateway. A Beckn Gateway is a component in a network where all the BAPs and BPPs register themselves.
+2. The logistics app forms a search request as per the Beckn logistics specification and sends the request to the Beckn Gateway. A Beckn Gateway is a component in a network where all the BAPs and BPPs register themselves.
 3. The Beckn Gateway(BG) broadcast the search request to all the BPPs registered on the Gateway. BG calls the search/ API endpoint implemented by the BPPs to broadcast the messages.
 4. The BPPs create a filtered catalogue based on the search request.
-5. Each of the BPPs calls the /on_search API endpoint implemented by the BAP to send a the filtered catalogue.
+5. Each of the BPPs calls the /on_search API endpoint implemented by the BAP to send a the filtered catalogue to the BAP.
 
 ### Example
 A search request for a logistics service provider may look like this
@@ -236,6 +236,7 @@ This section provides recommendations for implementing the APIs related to booki
 
 ### 1.2.2 Recommendations for BAPs
 
+
 #### 1.2.1.1 Selecting a logistics service from the catalog
 - REQUIRED. The BAP MUST implement the `on_select` endpoint on the url specified in the `context.bap_uri` field sent during `select`. In case of permissioned networks, this URL MUST match the `Subscriber.url` present on the respective entry in the Network Registry
 - OPTIONAL. The BAP user MUST submit the form at the URL received from `on_search`, if any,  under `xinput.form.url`.
@@ -251,6 +252,13 @@ This section provides recommendations for implementing the APIs related to booki
 - REQUIRED. The BAP MUST implement the `on_confirm` endpoint on the url specified in URL specified in the `context.bap_uri` field sent during `confirm`. In case of permissioned networks, this URL MUST match the `Subscriber.url` present on the respective entry in the Network Registry
 
 ### 1.2.3 Example Workflow for Initiating a booking for a logistics service.
+
+1. The customer selects a service from the catalogue, triggering the BAP to generate a select request. This request includes details of the service provider, the chosen service, and the preferred type of fulfillment. Subsequently, the select request is directly forwarded to the BPP.
+2. Upon receiving the select request, the BPP processes the information and promptly responds to the BAP, furnishing details of the selected service along with a corresponding quote. This exchange occurs within the on_select callback mechanism.
+3. With the service details provided, the customer proceeds to fill in pertinent fulfillment information, encompassing delivery address, shipping preferences, and other relevant data. Subsequently, the BAP initiates a request to the BPP, conveying the fulfillment and billing particulars.
+4. Upon receipt of the fulfillment and billing information, the BPP engages in processing the request and invokes the on_init API. This API encapsulates essential payment details, such as the payable amount and, if applicable, a payment URL.
+5. Once the customer completes the payment process, the BAP triggers the confirm API of the BPP, transmitting the associated payment transaction ID.
+6. The BPP, upon receiving the confirm request, proceeds to process the transaction and invokes the on_confirm API. Within this callback, the BAP is furnished with an order ID, indicating the successful placement of the order.
 
 ### 1.2.3 Example Requests
 
@@ -1047,7 +1055,12 @@ This section contains recommendations for implementing the APIs related to fulfi
 #### 1.3.2.4 Real-time tracking
 - REQUIRED. The BAP MUST implement the `on_track` endpoint on the url specified in URL specified in the `context.bap_uri` field sent during `track`. In case of permissioned networks, this URL MUST match the `Subscriber.url` present on the respective entry in the Network Registry
 
-### 1.3.3 Example Workflow
+### 1.3.3 Example Workflow for fulfillment of a logistics order
+
+1. The BAP offers the option to receive regular unsolicited status updates from the BPP for confirmed orders. Upon order confirmation, the BPP triggers the /on_status callback URL of the BAP to deliver updates. Furthermore, the BAP can proactively request status updates from the BPP by calling the /status endpoint. The BPP responds by sending the status information via the /on_status callback after receiving the /status call.
+2. To update order details, the BAP can utilize the /update endpoint of the BPP. Upon updating, the BPP triggers the /on_update endpoint of the BAP, providing the latest order details.
+3. For order delivery location tracking, the BAP can invoke the /track endpoint of the BPP. The BPP, in turn, employs the on_track callback endpoint of the BAP to furnish a URL for tracking the delivery location.
+4. Should the need arise to cancel an active order, the BAP can call the /cancel endpoint of the BPP. Subsequently, the BPP sends the order details post-cancellation to the /on_cancel callback endpoint of the BAP.
 
 ### 1.3.4 Example Requests
 
@@ -1271,6 +1284,508 @@ Below is an example of an `on_status` callback
 }
 ```
 
+Below is an example of a `update` request
+```
+
+{
+    "context": {
+        "domain": "logistics",
+        "location": {
+            "country": {
+                "code": "IND"
+            },
+            "city": {
+                "code": "std:0806"
+            }
+        },
+        "action": "update",
+        "version": "1.1.0",
+        "bap_id": "logistics_bap",
+        "bap_uri": "https://logistics_bap.com",
+        "bpp_id": "logistics_bpp",
+        "bpp_uri": "https://logistics_bpp.com",
+        "transaction_id": "aa77b78e-66b0-47a5-9560-527a36cf0d9f",
+        "message_id": "9d498536-4dba-4c69-a47e-bed245623ecc",
+        "timestamp": "2024-01-15T16:00:00.000Z",
+        "ttl": "PT30S"
+    },
+    "message": {
+        "update_target": "order.billing",
+        "order": {
+            "billing": {
+                "name": "Paul Sterling",
+                "phone": "+913333333333",
+                "email": "sterling@gmail.com"
+            }
+        }
+    }
+}
+```
+
+Below is an example of a `on_update` callback
+```
+{
+    "context": {
+        "domain": "logistics",
+        "location": {
+            "country": {
+                "code": "IND"
+            },
+            "city": {
+                "code": "std:0806"
+            }
+        },
+        "action": "on_update",
+        "version": "1.1.0",
+        "bap_id": "logistics_bap",
+        "bap_uri": "https://logistics_bap.com",
+        "bpp_id": "logistics_bpp",
+        "bpp_uri": "https://logistics_bpp.com",
+        "transaction_id": "aa77b78e-66b0-47a5-9560-527a36cf0d9f",
+        "message_id": "9d498536-4dba-4c69-a47e-bed245623ecc",
+        "timestamp": "2024-01-15T16:00:00.000Z",
+        "ttl": "PT30S"
+    },
+    "message": {
+        "order": {
+            "id": "oid/12",
+            "provider": {
+                "id": "P1",
+                "descriptor": {
+                    "name": "Logistics",
+                    "short_desc": "Logistics Org",
+                    "long_desc": "Logistics Org",
+                    "images": [
+                        {
+                            "url": "https://logistics-guru-image.png",
+                            "size_type": "sm"
+                        }
+                    ]
+                },
+                "locations": [
+                    {
+                        "id": "L1",
+                        "gps": "13.786587,76.872309",
+                        "address": "Shubhash nagar, 3rd block",
+                        "city": {
+                            "name": "Bengaluru"
+                        },
+                        "state": {
+                            "name": "Karnataka"
+                        },
+                        "country": {
+                            "name": "India"
+                        },
+                        "area_code": "560042"
+                    }
+                ]
+            },
+            "items": [
+                {
+                    "id": "I1",
+                    "descriptor": {
+                        "Name": "Lightweight delivery",
+                        "short_desc": "Delivery in just 1 hours",
+                        "long_desc": "Delivery in just 1 hours"
+                    },
+                    "price": {
+                        "currency": "INR",
+                        "value": "starting from 50.0"
+                    },
+                    "category_ids": [
+                        "category1"
+                    ],
+                    "tags": [
+                        {
+                            "descriptor": {
+                                "name": "charges"
+                            },
+                            "List": [
+                                {
+                                    "descriptor": {
+                                        "code": "Min-Chargable-Weight-in-KG"
+                                    },
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    ],
+                    "quantity": {
+                        "selected": {
+                            "count": "5",
+                            "measure": {
+                                "unit": "KG"
+                            }
+                        }
+                    }
+                }
+            ],
+            "quote": {
+                "price": {
+                    "currency": "INR",
+                    "value": "50"
+                },
+                "breakup": [
+                    {
+                        "title": "item price",
+                        "item": {
+                            "id": "I1"
+                        },
+                        "price": {
+                            "currency": "INR",
+                            "value": "50"
+                        }
+                    }
+                ]
+            },
+            "fulfillments": [
+                {
+                    "id": "1",
+                    "type": "Road-Shipping",
+                    "stops": [
+                        {
+                            "type": "Pickup",
+                            "location": {
+                                "gps": "14.785638,76.454553",
+                                "area_code": "320042"
+                            },
+                            "time": {
+                                "timestamp": "2024-01-15T16:00:00.000Z"
+                            },
+                            "customer": {
+                                "person": {
+                                    "name": "Paul Sterling"
+                                },
+                                "contact": {
+                                    "phone": "+913333333333"
+                                }
+                            }
+                        },
+                        {
+                            "type": "Drop",
+                            "location": {
+                                "gps": "14.433424,77.928379",
+                                "area_code": "320042"
+                            },
+                            "customer": {
+                                "person": {
+                                    "name": "Anand Ahuja"
+                                },
+                                "contact": {
+                                    "phone": "+914444444444"
+                                }
+                            }
+                        }
+                    ],
+                    "state": {
+                        "descriptor": {
+                            "code": "Order_Initiated"
+                        }
+                    }
+                }
+            ],
+            "billing": {
+                "name": "Paul Sterling",
+                "phone": "+913333333333",
+                "email": "sterling@gmail.com"
+            },
+            "payment": {
+                "status": "PAID",
+                "type": "PRE-FULFILLMENT",
+                "params": {
+                    "transaction_id": "tid/6737457",
+                    "amount": "50",
+                    "currency": "INR"
+                }
+            }
+        }
+    }
+}
+```
+
+Below is an example of a `track` request
+```
+
+{
+    "context": {
+        "domain": "logistics",
+        "location": {
+            "country": {
+                "code": "IND"
+            },
+            "city": {
+                "code": "std:0806"
+            }
+        },
+        "action": "track",
+        "version": "1.1.0",
+        "bap_id": "logistics_bap",
+        "bap_uri": "https://logistics_bap.com",
+        "bpp_id": "logistics_bpp",
+        "bpp_uri": "https://logistics_bpp.com",
+        "transaction_id": "aa77b78e-66b0-47a5-9560-527a36cf0d9f",
+        "message_id": "9d498536-4dba-4c69-a47e-bed245623ecc",
+        "timestamp": "2024-01-15T16:00:00.000Z",
+        "ttl": "PT30S"
+    },
+    "message": {
+        "order_id": "oid/12"
+    }
+}
+```
+
+Below is an example of a `on_track` callback
+```
+
+{
+    "context": {
+        "domain": "logistics",
+        "location": {
+            "country": {
+                "code": "IND"
+            },
+            "city": {
+                "code": "std:0806"
+            }
+        },
+        "action": "on_track",
+        "version": "1.1.0",
+        "bap_id": "logistics_bap",
+        "bap_uri": "https://logistics_bap.com",
+        "bpp_id": "logistics_bpp",
+        "bpp_uri": "https://logistics_bpp.com",
+        "transaction_id": "aa77b78e-66b0-47a5-9560-527a36cf0d9f",
+        "message_id": "9d498536-4dba-4c69-a47e-bed245623ecc",
+        "timestamp": "2024-01-15T16:00:00.000Z",
+        "ttl": "PT30S"
+    },
+    "message": {
+        "tracking": {
+            "url": "https://sample/tracking/url",
+            "status": "active"
+        }
+    }
+}
+```
+
+Below is an example of a `cancel` request
+```
+
+{
+    "context": {
+        "domain": "logistics",
+        "location": {
+            "country": {
+                "code": "IND"
+            },
+            "city": {
+                "code": "std:0806"
+            }
+        },
+        "action": "cancel",
+        "version": "1.1.0",
+        "bap_id": "logistics_bap",
+        "bap_uri": "https://logistics_bap.com",
+        "bpp_id": "logistics_bpp",
+        "bpp_uri": "https://logistics_bpp.com",
+        "transaction_id": "aa77b78e-66b0-47a5-9560-527a36cf0d9f",
+        "message_id": "9d498536-4dba-4c69-a47e-bed245623ecc",
+        "timestamp": "2024-01-15T16:00:00.000Z",
+        "ttl": "PT30S"
+    },
+    "message": {
+        "order_id": "oid/12",
+        "cancellation_reason_id": "3"
+    }
+}
+```
+
+Below is an example of a `on_cancel` callback
+```
+{
+    "context": {
+        "domain": "logistics",
+        "location": {
+            "country": {
+                "code": "IND"
+            },
+            "city": {
+                "code": "std:0806"
+            }
+        },
+        "action": "on_cancel",
+        "version": "1.1.0",
+        "bap_id": "logistics_bap",
+        "bap_uri": "https://logistics_bap.com",
+        "bpp_id": "logistics_bpp",
+        "bpp_uri": "https://logistics_bpp.com",
+        "transaction_id": "aa77b78e-66b0-47a5-9560-527a36cf0d9f",
+        "message_id": "9d498536-4dba-4c69-a47e-bed245623ecc",
+        "timestamp": "2024-01-15T16:00:00.000Z",
+        "ttl": "PT30S"
+    },
+    "message": {
+        "order": {
+            "id": "oid/12",
+            "provider": {
+                "id": "P1",
+                "descriptor": {
+                    "name": "Logistics",
+                    "short_desc": "Logistics Org",
+                    "long_desc": "Logistics Org",
+                    "images": [
+                        {
+                            "url": "https://logistics-guru-image.png",
+                            "size_type": "sm"
+                        }
+                    ]
+                },
+                "locations": [
+                    {
+                        "id": "L1",
+                        "gps": "13.786587,76.872309",
+                        "address": "Shubhash nagar, 3rd block",
+                        "city": {
+                            "name": "Bengaluru"
+                        },
+                        "state": {
+                            "name": "Karnataka"
+                        },
+                        "country": {
+                            "name": "India"
+                        },
+                        "area_code": "560042"
+                    }
+                ]
+            },
+            "items": [
+                {
+                    "id": "I1",
+                    "descriptor": {
+                        "Name": "Lightweight delivery",
+                        "short_desc": "Delivery in just 1 hours",
+                        "long_desc": "Delivery in just 1 hours"
+                    },
+                    "price": {
+                        "currency": "INR",
+                        "value": "50.0"
+                    },
+                    "category_ids": [
+                        "category1"
+                    ],
+                    "time": {
+                        "duration": "PT60M",
+                        "timestamp": "2024-01-14T16: 00: 00.000Z"
+                    },
+                    "tags": [
+                        {
+                            "descriptor": {
+                                "name": "charges"
+                            },
+                            "List": [
+                                {
+                                    "descriptor": {
+                                        "code": "Min-Chargable-Weight-in-KG"
+                                    },
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    ],
+                    "quantity": {
+                        "selected": {
+                            "count": "1",
+                            "measure": {
+                                "unit": "KG",
+                                "value": "1"
+                            }
+                        }
+                    }
+                }
+            ],
+            "quote": {
+                "price": {
+                    "currency": "INR",
+                    "value": "50"
+                },
+                "breakup": [
+                    {
+                        "title": "item price",
+                        "item": {
+                            "id": "I1"
+                        },
+                        "price": {
+                            "currency": "INR",
+                            "value": "50"
+                        }
+                    }
+                ]
+            },
+            "fulfillments": [
+                {
+                    "id": "1",
+                    "type": "Road-Shipping",
+                    "stops": [
+                        {
+                            "type": "Pickup",
+                            "location": {
+                                "gps": "14.785638,76.454553",
+                                "area_code": "320042"
+                            },
+                            "time": {
+                                "timestamp": "2024-01-15T16:00:00.000Z"
+                            },
+                            "customer": {
+                                "person": {
+                                    "name": "Paul Sterling"
+                                },
+                                "contact": {
+                                    "phone": "+913333333333"
+                                }
+                            }
+                        },
+                        {
+                            "type": "Drop",
+                            "location": {
+                                "gps": "14.433424,77.928379",
+                                "area_code": "320042"
+                            },
+                            "customer": {
+                                "person": {
+                                    "name": "Anand Ahuja"
+                                },
+                                "contact": {
+                                    "phone": "+914444444444"
+                                }
+                            }
+                        }
+                    ],
+                    "state": {
+                        "descriptor": {
+                            "code": "Order-Cancelled"
+                        }
+                    }
+                }
+            ],
+            "billing": {
+                "name": "Paul Sterling",
+                "phone": "+913333333333",
+                "email": "sample@gmail.com"
+            },
+            "payment": {
+                "status": "PAID",
+                "type": "PRE-FULFILLMENT",
+                "params": {
+                    "transaction_id": "tid/6737457",
+                    "amount": "1500",
+                    "currency": "INR"
+                }
+            }
+        }
+    }
+}
+```
+
 ## 1.4 Post-fulfillment of logistics order
 This section contains recommendations for implementing the APIs after fulfilling a logistics order
 
@@ -1292,7 +1807,10 @@ This section contains recommendations for implementing the APIs after fulfilling
 #### 1.4.2.2 Providing Support
 - REQUIRED. The BAP MUST implement the `on_support` endpoint on the url specified in URL specified in the `context.bap_uri` field sent during `support`. In case of permissioned networks, this URL MUST match the `Subscriber.url` present on the respective entry in the Network Registry
 
-### 1.4.3 Example Workflow
+### 1.4.3 Example Workflow for Accessing Post-Fulfillment Services in Logistics
+
+1. Customers have the option to provide ratings for various aspects such as Item, Order, Fulfillment, Provider, Agent, or Support. The BAP can initiate this process by calling the /rating endpoint of the BPP, enabling users to select a rating category (such as Item, Order, Fulfillment, Provider, Agent, or Support) and provide a corresponding rating value.
+2. Customers can easily reach out to the customer support team by invoking the /support endpoint through the BAP. Upon this request, the BPP responds by triggering the /on_support callback, providing essential contact information such as helpline numbers or email addresses for customer support assistance.
 
 ### 1.4.4 Example Requests
 
