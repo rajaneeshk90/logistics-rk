@@ -1108,11 +1108,11 @@ components:
         type:
           type: string
           enum:
-            - CONTEXT-ERROR
-            - CORE-ERROR
-            - DOMAIN-ERROR
-            - POLICY-ERROR
-            - JSON_SCHEMA-ERROR
+            - CONTEXT_ERROR
+            - CORE_ERROR
+            - DOMAIN_ERROR
+            - POLICY_ERROR
+            - JSON_SCHEMA_ERROR
         code:
           type: string
           description: 'Standard error code. For full list of error codes, refer to docs/protocol-drafts/BECKN-005-ERROR-CODES-DRAFT-01.md of this repo"'
@@ -1167,10 +1167,10 @@ components:
           description: 'A code that describes the mode of fulfillment. This is typically set when there are multiple ways an order can be fulfilled.'
           type: string
           enum:
-            - Air-Shipping
-            - Ocean-Shipping
-            - Road-Shipping
-            - Rail-Shipping
+            - AIR_SHIPPING
+            - OCEAN_SHIPPING
+            - ROAD_SHIPPING
+            - RAIL_SHIPPING
         rateable:
           description: Whether the fulfillment can be rated or not
           type: boolean
@@ -1215,46 +1215,26 @@ components:
       type: object
       properties:
         descriptor:
-          $ref: '#/components/schemas/FulfillmentDescriptor'
+          allOf:
+            - $ref: '#/components/schemas/Descriptor'
+            - properties:
+                code:
+                  enum:
+                    - PENDING_FULFILLMENT
+                    - PACKING
+                    - PICKING
+                    - SHIPPED
+                    - OUT_FOR_DELIVERY
+                    - DELIVERED
+                    - FAILED_FULFILLMENT
+                    - CANCELED
+                    - RETURNED
         updated_at:
           type: string
           format: date-time
         updated_by:
           type: string
           description: ID of entity which changed the state
-    FulfillmentDescriptor:
-      description: Description of fulfillment .
-      type: object
-      properties:
-        name:
-          type: string
-        code:
-          type: string
-          enum:
-            - Pending-Fulfillment
-            - Packing
-            - Picking
-            - Shipped
-            - Out-for-Delivery
-            - Delivered
-            - Failed-Fulfillment
-            - Canceled
-            - Returned
-        short_desc:
-          type: string
-        long_desc:
-          type: string
-        additional_desc:
-          type: object
-          properties:
-            url:
-              type: string
-            content_type:
-              type: string
-              enum:
-                - text/plain
-                - text/html
-                - application/json
     Gps:
       description: Describes a GPS coordinate
       type: string
@@ -1620,12 +1600,13 @@ components:
           description: Status of the order. Allowed values can be defined by the network policy
           type: string
           enum:
-            - Initiated
-            - Acknowledged
-            - Packed
-            - Shipped
-            - Delivered
-            - Cancelled
+            - INITIATED
+            - ACKNOWLEDGED
+            - PACKED
+            - SHIPPED
+            - OUT_FOR_DELIVERY
+            - DELIVERED
+            - CANCELLED
         type:
           description: 'This is used to indicate the type of order being created to BPPs.'
           type: string
@@ -1772,15 +1753,15 @@ components:
         type:
           type: string
           enum:
-            - PRE-ORDER
-            - PRE-FULFILLMENT
-            - ON-FULFILLMENT
-            - POST-FULFILLMENT
+            - PRE_ORDER
+            - PRE_FULFILLMENT
+            - ON_FULFILLMENT
+            - POST_FULFILLMENT
         status:
           type: string
           enum:
             - PAID
-            - NOT-PAID
+            - NOT_PAID
         time:
           $ref: '#/components/schemas/Time'
         tags:
@@ -1935,17 +1916,15 @@ components:
           items:
             type: object
             properties:
-              type:
-                type: string
-                enum:
-                  - Item
-                  - Offer
-                  - Add-on
-                  - Fulfillment
               item:
                 $ref: '#/components/schemas/Item'
               title:
                 type: string
+                enum:
+                  - ITEM
+                  - OFFER
+                  - ADD_ON
+                  - FULFILLMENT
               price:
                 $ref: '#/components/schemas/Price'
         ttl:
@@ -1958,12 +1937,12 @@ components:
           description: Category of the entity being rated
           type: string
           enum:
-            - Item
-            - Order
-            - Fulfillment
-            - Provider
-            - Agent
-            - Support
+            - ITEM
+            - ORDER
+            - FULFILLMENT
+            - PROVIDER
+            - AGENT
+            - SUPPORT
         id:
           description: Id of the object being rated
           type: string
@@ -2116,13 +2095,6 @@ components:
       description: Details of customer support
       type: object
       properties:
-        type:
-          type: string
-          enum:
-            - order
-            - billing
-            - fulfillment
-            - payment
         ref_id:
           type: string
         callback_phone:
@@ -2212,8 +2184,8 @@ components:
           description: 'This value indicates if the tracking is currently active or not. If this value is `active`, then the BAP can begin tracking the order. If this value is `inactive`, the tracking URL is considered to be expired and the BAP should stop tracking the order.'
           type: string
           enum:
-            - active
-            - inactive
+            - ACTIVE
+            - INACTIVE
     Vehicle:
       description: 'Describes a vehicle is a device that is designed or used to transport people or cargo over land, water, air, or through space.<br>This has properties like category, capacity, make, model, size,variant,color,energy_type,registration'
       type: object
